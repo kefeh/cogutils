@@ -187,6 +187,7 @@ void Logger::writing_loop()
     }
     catch (concurrent_queue< std::string* >::Canceled &e)
     {
+        pending_write = false;
         return;
     }
 }
@@ -277,7 +278,8 @@ Logger::Logger(const std::string &fname, Logger::Level level, bool tsEnabled)
 {
     this->fileName.assign(fname);
     this->currentLevel = level;
-    this->backTraceLevel = get_level_from_string(opencog::config()["BACK_TRACE_LOG_LEVEL"]);
+    this->backTraceLevel = get_level_from_string(
+            opencog::config().get("BACK_TRACE_LOG_LEVEL", "error"));
 
     this->timestampEnabled = tsEnabled;
     this->printToStdout = false;
